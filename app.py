@@ -42,7 +42,7 @@ app.layout = html.Div([
                     html.Div([
                         html.Label("Asistencia (%)"),
                         dcc.Input(id='Attendance',
-                                  type='number', min=0, max=100),
+                                  type='number', min=0),
                     ], style={'width': '50%'}),
                 ], className='flex-1'),
 
@@ -50,7 +50,7 @@ app.layout = html.Div([
                     html.Div([
                         html.Label("Calificaciones Anteriores"),
                         dcc.Input(id='Previous_Scores',
-                                  type='number', min=0, max=100),
+                                  type='number', min=0),
                     ], style={'width': '50%'}),
 
                     html.Div([
@@ -210,6 +210,35 @@ def predict_student(n_clicks, Hours_Studied, Attendance, Parental_Involvement,
             html.Div([
                 html.Span("Error"),
                 html.Span("Por favor, completa todos los campos.",
+                          style={'color': '#c2410c'}),
+            ], className='text')
+        ], {'display': 'block'}, "card card-warning"
+    
+    if Hours_Studied > 85:
+        return [
+            html.I(className='mi--warning', style={'marginRight': '12px'}),
+            html.Div([
+                html.Span("Advertencia"),
+                html.Span("Las horas de estudio no pueden superar 85 por semana.",
+                          style={'color': '#c2410c'}),
+            ], className='text')
+        ], {'display': 'block'}, "card card-warning"
+
+    if Attendance > 100:
+        return [
+            html.I(className='mi--warning', style={'marginRight': '12px'}),
+            html.Div([
+                html.Span("Advertencia"),
+                html.Span("La asistencia no puede superar el 100%.",
+                          style={'color': '#c2410c'}),
+            ], className='text')
+        ], {'display': 'block'}, "card card-warning"
+    if Previous_Scores > 100:
+        return [
+            html.I(className='mi--warning', style={'marginRight': '12px'}),
+            html.Div([
+                html.Span("Advertencia"),
+                html.Span("Las calificaciones anteriores no pueden superar 100.",
                           style={'color': '#c2410c'}),
             ], className='text')
         ], {'display': 'block'}, "card card-warning"
