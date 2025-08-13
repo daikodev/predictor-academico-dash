@@ -218,7 +218,15 @@ def predict_student(n_clicks, Hours_Studied, Attendance, Parental_Involvement,
     try:
         study_per_attendance = Hours_Studied / Attendance
     except ZeroDivisionError:
-        return "La asistencia no puede ser 0 para calcular la métrica.", {'display': 'block'}, "card card-warning"
+        return [
+            html.I(className='mi--warning', style={'marginRight': '12px'}),
+
+            html.Div([
+                html.Span("Error"),
+                html.Span("La asistencia no puede ser 0 para calcular la métrica.",
+                          style={'color': '#c2410c'}),
+            ], className='text')
+        ], {'display': 'block'}, "card card-warning"
 
     # Crear DataFrame para predecir (en el mismo orden que el entrenamiento)
     new_register = pd.DataFrame([{
