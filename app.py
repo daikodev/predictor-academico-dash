@@ -19,7 +19,30 @@ model.fit(X, y)
 app = dash.Dash(__name__)
 server = app.server
 
+navbar = html.Nav([
+    # Contenedor del Logo
+    html.Div([
+        html.Div([
+        html.Span(className="vaadin--academy-cap logo-icon-container"),
+        ], className="icon-wrapper"),
+        html.Span("Academic Predictor", className="logo-text")
+    ], className="logo"),
+
+    # Contenedor de los Enlaces de Navegación
+    html.Div([
+        dcc.Link([
+            html.Span(className="lets-icons--form-fill"),
+            html.Span("Formulario")
+        ], href="/", className="nav-link"),
+        dcc.Link([
+            html.Span(className="mdi--report-line"),
+            html.Span("Reportes")
+        ], href="/reports", className="nav-link"),
+    ], className="nav-links")
+], className="navbar")
+
 app.layout = html.Div([
+    navbar,
     html.Div([
         html.H1("Predictor de Rendimiento Académico"),
 
