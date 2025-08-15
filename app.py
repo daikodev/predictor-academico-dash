@@ -1,198 +1,81 @@
 import dash
 from dash import dcc, html, Input, Output, State
+from pages.form import layout as form_layout
+from pages.reports import layout as reports_layout
 import plotly.express as px
 from sklearn.neural_network import MLPClassifier
 import pandas as pd
 import numpy as np
 
+app = dash.Dash(__name__, suppress_callback_exceptions=True)
+server = app.server
 
+# --- Carga de Datos ---
 student = pd.read_csv("data/Students.csv", sep=",")
-
 X = student.drop("Exam_Result", axis=1)
 y = student["Exam_Result"]
-
-
 model = MLPClassifier(hidden_layer_sizes=(
     100, 50), activation='relu', solver='adam', random_state=42, max_iter=500)
 model.fit(X, y)
 
-app = dash.Dash(__name__)
-server = app.server
-
+# --- Menú de Navegación ---
 navbar = html.Nav([
-    # Contenedor del Logo
     html.Div([
         html.Div([
-        html.Span(className="vaadin--academy-cap logo-icon-container"),
-        ], className="icon-wrapper"),
-        html.Span("Academic Predictor", className="logo-text")
-    ], className="logo"),
+            # Logo
+            html.Div([
+                html.Div([
+                    html.Span(
+                        className="vaadin--academy-cap logo-icon-container"),
+                ], className="icon-wrapper"),
+                html.Span("Predictor Académico", className="logo-text")
 
-    # Contenedor de los Enlaces de Navegación
-    html.Div([
-        dcc.Link([
-            html.Span(className="lets-icons--form-fill"),
-            html.Span("Formulario")
-        ], href="/", className="nav-link"),
-        dcc.Link([
-            html.Span(className="mdi--report-line"),
-            html.Span("Reportes")
-        ], href="/reports", className="nav-link"),
-    ], className="nav-links")
-], className="navbar")
+            ], className="logo"),
 
+            # Links
+            html.Div([
+                dcc.Link([
+                    html.Span(className="lets-icons--form-fill"),
+                    html.Span("Formulario")
+                ], href="/", id="link-form", className="nav-link"),
+                dcc.Link([
+                    html.Span(className="mdi--report-line"),
+                    html.Span("Reportes")
+                ], href="/reports", id="link-reports", className="nav-link"),
+            ], className="nav-links")
+        ], className="nav-menu")
+    ], className="navbar")
+])
+
+# --- Layout Principal ---
 app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
     navbar,
-    html.Div([
-        html.H1("Predictor de Rendimiento Académico"),
+    html.Div(id='page-content')
+])
 
-        html.P("Completa todos los campos para predecir si el estudiante aprobará o desaprobará",
-               className='subtitle'),
-    ], className='container-1'),
+# --- Callback para Navegar entre Páginas ---
+@app.callback(Output('page-content', 'children'), Input('url', 'pathname'))
+def display_page(pathname):
+    if pathname == "/reports":
+        return reports_layout
+    return form_layout
 
-    html.Div([
-        html.Div([
-            # --- Datos Académicos ---
-            html.Div([
-                html.H3("Datos Académicos"),
+# --- Callback para Clase del Link Activo ---
+@app.callback(
+    Output("link-form", "className"),
+    Output("link-reports", "className"),
+    Input("url", "pathname")
+)
+def update_active_link(pathname):
+    active_class = "nav-link active"
+    normal_class = "nav-link"
 
-                html.Div([
-                    html.Div([
-                        html.Label("Horas de Estudio (por semana)"),
-                        dcc.Input(id='Hours_Studied', type='number', min=0),
-                    ], style={'width': '50%'}),
+    if pathname == "/reports":
+        return normal_class, active_class
+    return active_class, normal_class
 
-                    html.Div([
-                        html.Label("Asistencia (%)"),
-                        dcc.Input(id='Attendance',
-                                  type='number', min=0),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-
-                html.Div([
-                    html.Div([
-                        html.Label("Calificaciones Anteriores"),
-                        dcc.Input(id='Previous_Scores',
-                                  type='number', min=0),
-                    ], style={'width': '50%'}),
-
-                    html.Div([
-                        html.Label("Sesiones de Tutoría"),
-                        dcc.Dropdown(id='Tutoring_Sessions',
-                                     options=[{'label': 'Sí', 'value': 1},
-                                              {'label': 'No', 'value': 0}],
-                                     placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-            ], className='card'),
-
-            # --- Factores Familiares ---
-            html.Div([
-                html.H3("Factores Familiares"),
-
-                html.Div([
-                    html.Div([
-                        html.Label("Participación Parental"),
-                        dcc.Dropdown(id='Parental_Involvement',
-                                     options=[{'label': 'Alta', 'value': 2}, {'label': 'Media', 'value': 1}, {'label': 'Baja', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-
-                    html.Div([
-                        html.Label("Ingresos Familiares"),
-                        dcc.Dropdown(id='Family_Income',
-                                     options=[{'label': 'Altos', 'value': 2}, {'label': 'Medios', 'value': 1}, {'label': 'Bajos', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-
-                html.Div([
-                    html.Div([
-                        html.Label("Nivel Educativo Parental"),
-                        dcc.Dropdown(id='Parental_Education_Level',
-                             options=[{'label': 'Universitario', 'value': 2}, {'label': 'Secundaria', 'value': 1}, {'label': 'Primaria', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-
-                    html.Div([
-                        html.Label("Distancia del Hogar"),
-                        dcc.Dropdown(id='Distance_from_Home',
-                             options=[{'label': 'Cerca', 'value': 0}, {'label': 'Media', 'value': 1}, {'label': 'Lejos', 'value': 2}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-            ],  className='card'),
-
-            # --- Recursos y Ambiente ---
-            html.Div([
-                html.H3("Recursos y Ambiente"),
-
-                html.Div([
-                    html.Div([
-                        html.Label("Acceso a Recursos"),
-                        dcc.Dropdown(id='Access_to_Resources',
-                             options=[{'label': 'Sí', 'value': 1}, {'label': 'No', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-
-                    html.Div([
-                        html.Label("Acceso a Internet"),
-                        dcc.Dropdown(id='Internet_Access',
-                             options=[{'label': 'Sí', 'value': 1}, {'label': 'No', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-
-                html.Div([
-                    html.Div([
-                        html.Label("Calidad del Profesor"),
-                        dcc.Dropdown(id='Teacher_Quality',
-                             options=[{'label': 'Alta', 'value': 2}, {'label': 'Media', 'value': 1}, {'label': 'Baja', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-
-                    html.Div([
-                        html.Label("Actividades Extracurriculares"),
-                        dcc.Dropdown(id='Extracurricular_Activities',
-                             options=[{'label': 'Sí', 'value': 1}, {'label': 'No', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-
-            ],  className='card'),
-        ], className='flex-column'),
-
-
-        html.Div([
-            # --- Factores Personales ---
-            html.Div([
-                html.H3("Factores Personales"),
-
-                html.Div([
-                    html.Div([
-                        html.Label("Nivel de Motivación"),
-                        dcc.Dropdown(id='Motivation_Level',
-                             options=[{'label': 'Alta', 'value': 2}, {'label': 'Media', 'value': 1}, {'label': 'Baja', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-
-                    html.Div([
-                        html.Label("Influencia de Compañeros"),
-                        dcc.Dropdown(id='Peer_Influence',
-                             options=[{'label': 'Positiva', 'value': 1}, {'label': 'Negativa', 'value': 0}], placeholder="Selecciona una opción"),
-                    ], style={'width': '50%'}),
-                ], className='flex-1'),
-            ],  className='card'),
-
-            html.Div([
-                html.Button([
-                    html.I(className='iconamoon--trend-up',
-                           style={'marginRight': '12px'}),
-                    "Predecir Resultado"
-                ], id='predict-button', className='button-predict')
-            ],  className='card'),
-
-            html.Div([
-                html.Div(id='output_prediction', className='text-container')
-            ],  id='prediction_container', className='card', style={'display': 'none'})
-
-        ], className='flex-column')
-
-    ], className='container-2'),
-], className='container')
-
-
+# --- Callback para Predecir ---
 @app.callback(
     Output('output_prediction', 'children'),
     Output('prediction_container', 'style'),
@@ -236,7 +119,7 @@ def predict_student(n_clicks, Hours_Studied, Attendance, Parental_Involvement,
                           style={'color': '#c2410c'}),
             ], className='text')
         ], {'display': 'block'}, "card card-warning"
-    
+
     if Hours_Studied > 85:
         return [
             html.I(className='mi--warning', style={'marginRight': '12px'}),
