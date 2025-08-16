@@ -203,7 +203,6 @@ app.layout = html.Div([
     ], className='container')
 ])
 
-r
 
 
 @app.callback(

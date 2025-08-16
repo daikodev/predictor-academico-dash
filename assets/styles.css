@@ -259,6 +259,93 @@ input {
   justify-content: center;
 }
 
+/* Report */
+
+.kpi-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.kpi-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin: 10px;
+    width: 220px;
+    text-align: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    transition: transform 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+}
+
+.kpi-title {
+    font-size: 16px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.kpi-value {
+    font-size: 32px;
+    font-weight: 600;
+    color: #212529;
+    margin: 10px 0;
+}
+
+.kpi-value-green {
+    font-size: 32px;
+    font-weight: 600;
+    color: #28a745;
+    margin: 10px 0;
+}
+
+.kpi-value-red {
+    font-size: 32px;
+    font-weight: 600;
+    color: #dc3545;
+    margin: 10px 0;
+}
+
+.kpi-subtitle-info {
+    font-size: 14px;
+    color: #6c757d;
+}
+/* Contenedor de los gráficos */
+.container-for-report {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1400px;
+}
+
+/* Estilo para cada gráfico */
+.chart-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    margin: 10px;
+    flex: 1 1 calc(50% - 40px); /* Regla clave para la grilla */
+    min-width: 500px; /* Evita que los gráficos se "aplasten" demasiado */
+    box-sizing: border-box;
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 768px) {
+    .chart-item {
+        flex-basis: 100%; /* Cada gráfico ocupa el 100% del ancho */
+    }
+}
 /* Iconos */
 
 .lets-icons--form-fill {
