@@ -1,5 +1,6 @@
 import dash
 from dash import dcc, html, Input, Output, State
+from data.data_loader import student
 from pages.form import layout as form_layout
 from pages.reports import layout as reports_layout
 import plotly.express as px
@@ -11,7 +12,6 @@ app = dash.Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 
 # --- Carga de Datos ---
-student = pd.read_csv("data/Students.csv", sep=",")
 X = student.drop("Exam_Result", axis=1)
 y = student["Exam_Result"]
 model = MLPClassifier(hidden_layer_sizes=(
