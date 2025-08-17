@@ -25,14 +25,17 @@ navbar = html.Nav([
             # Logo
             html.Div([
                 html.Div([
-                    html.Span(
-                        className="vaadin--academy-cap logo-icon-container"),
+                    html.Span(className="vaadin--academy-cap logo-icon-container"),
                 ], className="icon-wrapper"),
                 html.Span("Predictor Académico", className="logo-text")
-
             ], className="logo"),
 
-            # Links
+            html.Button([
+                html.Span(className="hamburger-bar"),
+                html.Span(className="hamburger-bar"),
+                html.Span(className="hamburger-bar"),
+            ], id="hamburger-btn", className="hamburger", n_clicks=0),
+
             html.Div([
                 dcc.Link([
                     html.Span(className="lets-icons--form-fill"),
@@ -42,9 +45,9 @@ navbar = html.Nav([
                     html.Span(className="mdi--report-line"),
                     html.Span("Reportes")
                 ], href="/reports", id="link-reports", className="nav-link"),
-            ], className="nav-links")
+            ], className="nav-links", id="nav-links"),
         ], className="nav-menu")
-    ], className="navbar")
+    ], className="navbar"),
 ])
 
 # --- Layout Principal ---
@@ -74,6 +77,17 @@ def update_active_link(pathname):
     if pathname == "/reports":
         return normal_class, active_class
     return active_class, normal_class
+
+@app.callback(
+    Output("nav-links", "className"),
+    Input("hamburger-btn", "n_clicks"),
+    State("nav-links", "className"),
+)
+def toggle_menu(n_clicks, current_class):
+    # Solo alterna en movil, en escritorio siempre es visible por CSS
+    if n_clicks and n_clicks % 2 == 1:
+        return "nav-links nav-links-open"
+    return "nav-links"
 
 # --- Callback para Predecir ---
 @app.callback(

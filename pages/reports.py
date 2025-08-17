@@ -3,7 +3,11 @@ from data.data_loader import student
 from sklearn.neural_network import MLPClassifier
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_curve, auc
+import plotly.figure_factory as ff
 import plotly.express as px
+import plotly.graph_objs as go
 import pandas as pd
 
 X = student.drop("Exam_Result", axis=1)
@@ -91,6 +95,40 @@ fig_bar = px.histogram(
     }
 )
 
+cm = confusion_matrix(y, predicciones)
+x_labels = ['Desaprobado', 'Aprobado']
+y_labels = ['Desaprobado', 'Aprobado']
+fig_confusion = ff.create_annotated_heatmap(
+    cm, x=x_labels, y=y_labels, colorscale='Blues',
+    showscale=True, annotation_text=[[str(cell) for cell in row] for row in cm]
+)
+fig_confusion.update_layout(title="Matriz de Confusión", xaxis_title="Predicción", yaxis_title="Real")
+
+# Curva ROC
+y_score = model.predict_proba(X)[:,1]
+fpr, tpr, _ = roc_curve(y, y_score)
+roc_auc = auc(fpr, tpr)
+fig_roc = go.Figure()
+fig_roc.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines', name=f'ROC curve (AUC = {roc_auc:.2f})'))
+fig_roc.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode='lines', name='Aleatorio', line=dict(dash='dash')))
+fig_roc.update_layout(title='Curva ROC', xaxis_title='Tasa de Falsos Positivos', yaxis_title='Tasa de Verdaderos Positivos')
+
+# Mapa de Correlación
+fig_corr = px.imshow(
+    student.corr(),
+    text_auto=True,
+    title="Mapa de Correlación entre Variables"
+)
+
+# (Opcional) Distribución de Probabilidades de Predicción
+probs = model.predict_proba(X)[:,1]
+fig_probs = px.histogram(
+    probs, nbins=20,
+    title="Distribución de Probabilidades de Predicción",
+    labels={'value':'Probabilidad de Aprobar', 'count':'Cantidad'}
+)
+fig_probs.update_layout(showlegend=False)
+
 # Ajusta el eje y para que vaya de 0 a 100
 fig_bar.update_yaxes(title="Tasa de Aprobación (%)", range=[0, 100])
 
@@ -149,6 +187,27 @@ layout = html.Div([
             html.Div([dcc.Graph(figure=fig_box)], className='chart-item'),
             html.Div([dcc.Graph(figure=fig_bar)], className='chart-item'),
             html.Div([dcc.Graph(figure=fig_importance)], className='chart-item'),
+        ], className='container-for-report'),
+    ], className='container_report')
+])
+
+layout = html.Div([
+    html.Div([
+        html.Div([
+            html.H1("Reportes y Análisis"),
+            html.P("Visualización de datos y tendencias del rendimiento académico", className='subtitle'),
+        ], className='container-1'),
+        kpi_cards,
+        html.Div([
+            html.Div([dcc.Graph(figure=fig)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_box)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_bar)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_importance)], className='chart-item'),
+            # --- Agrega aquí los nuevos gráficos ---
+            html.Div([dcc.Graph(figure=fig_confusion)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_roc)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_corr)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_probs)], className='chart-item'),
         ], className='container-for-report'),
     ], className='container_report')
 ])
