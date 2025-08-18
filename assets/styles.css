@@ -445,3 +445,148 @@ input {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
+
+/* --- Responsive para el formulario --- */
+@media (max-width: 900px) {
+  .container-2 {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .flex-column {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .flex-1 {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .flex-1 > div {
+    width: 100% !important;
+  }
+  .container {
+    padding: 10px;
+  }
+  .card {
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.1rem;
+  }
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 16px;
+}
+.hamburger-bar {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: #165dfb;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+@media (max-width: 900px) {
+  .hamburger {
+    display: flex;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #fff;
+    position: absolute;
+    top: 64px;
+    right: 0;
+    width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    z-index: 100;
+  }
+  .nav-links.nav-links-open {
+    display: flex;
+  }
+  .nav-menu {
+    position: relative;
+  }
+}
+@media (min-width: 901px) {
+  .nav-links {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    width: auto;
+  }
+  .hamburger {
+    display: none !important;
+  }
+}
+
+.container-for-report {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    padding: 10px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1400px;
+    gap: 20px;
+}
+
+.chart-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    margin: 0;
+    flex: 1 1 45%;
+    min-width: 320px;
+    max-width: 600px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Responsive para pantallas medianas */
+@media (max-width: 900px) {
+    .container-for-report {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .chart-item {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 600px) {
+    .container-for-report {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+    .chart-item {
+        padding: 4px;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+}
