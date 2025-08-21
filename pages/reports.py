@@ -51,7 +51,7 @@ fig_importance = px.bar(
     x="importance",
     y="feature",
     orientation="h",
-    title="Top 5 Variables más influyentes en el resultado del examen",
+    title="Top 5 Variables más Influyentes",
     labels={"importance": "Importancia", "feature": "Variables"},
     text="importance"
 )
@@ -59,41 +59,51 @@ fig_importance.update_traces(
     texttemplate="%{text:.4f}", textposition="outside", marker_color="#3B82F6"
 )
 
-# --- ... ---
+# --- Actividades Extracurriculares ---
 fig = px.pie(
     student,
-    names="Extracurricular_Activities",
-    title="Actividades Extracurriculares (0: No, 1: Sí)",
-    color="Extracurricular_Activities",
-    color_discrete_map={1: "#3B82F6", 0: "#64748B"}
+    names=student["Extracurricular_Activities"].map({0: "No", 1: "Sí"}),
+    title="Actividades Extracurriculares",
+    color=student["Extracurricular_Activities"].map({0: "No", 1: "Sí"}),
+    color_discrete_map={"Sí": "#3B82F6", "No": "#64748B"}
+)
+
+# --- Acceso a Internet ---
+fig_internet_donut = px.pie(
+    student,
+    names=student["Internet_Access"].map({0: "No", 1: "Sí"}),
+    title="Acceso a Internet",
+    hole=0.4,
+    color=student["Internet_Access"].map({0: "No", 1: "Sí"}),
+    color_discrete_map={"Sí": "#3B82F6", "No": "#64748B"}
 )
 
 # --- Horas de Estudio por Resultado de Examen ---
 fig_box = px.box(
     student,
-    x="Exam_Result",
+    x=student["Exam_Result"].map({0: "Desaprobado", 1: "Aprobado"}).rename("Resultado del Examen"),
     y="Hours_Studied",
-    color="Exam_Result",
+    color=student["Exam_Result"].map({0: "Desaprobado", 1: "Aprobado"}).rename("Resultado del Examen"),
     title="Horas de Estudio según el Resultado",
-    labels={"Exam_Result": "Resultado", "Hours_Studied": "Horas de Estudio"},
-    color_discrete_map={1: "#3B82F6", 0: "#64748B"}
+    labels={"x": "Resultado", "Hours_Studied": "Horas de Estudio"},
+    color_discrete_map={"Aprobado": "#3B82F6", "Desaprobado": "#64748B"}
 )
 # --- Tasa de Aprobación por Nivel de Motivación ---
 fig_bar = px.histogram(
     student,
     x="Motivation_Level",
-    color="Exam_Result",
+    color=student["Exam_Result"].map({1: "Aprobado", 0: "Desaprobado"}).rename("Resultado del Examen"),
     barmode="group",
     histnorm="percent",
-    title="Rendimiento por Nivel de Motivación<br>Comparación de tasas de aprobación según motivación del estudiante",
+    title="Rendimiento y Tasa de Aprobación por Nivel de Motivación",
     labels={
         "Motivation_Level": "Nivel de Motivación",
-        "Exam_Result": "Resultado del Examen",
-        "count": "Porcentaje de Estudiantes"
+        "Resultado del Examen": "Resultado del Examen",
+        "percent": "Porcentaje de Estudiantes"
     },
-    color_discrete_map={1: "#3B82F6", 0: "#64748B"},
+    color_discrete_map={"Aprobado": "#3B82F6", "Desaprobado": "#64748B"},
     category_orders={
-        "Exam_Result": [1, 0]
+        "Resultado del Examen": ["Aprobado", "Desaprobado"]
     }
 )
 
@@ -119,7 +129,7 @@ fig_roc.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines',
                   name=f'ROC curve (AUC = {roc_auc:.2f})', line=dict(color="#3B82F6", width=2)))
 fig_roc.add_trace(go.Scatter(
     x=[0, 1], y=[0, 1], mode='lines', name='Aleatorio', line=dict(dash='dash')))
-fig_roc.update_layout(title='Curva ROC', xaxis_title='Tasa de Falsos Positivos',
+fig_roc.update_layout(title='Curva ROC - Rendimiento del Modelo', xaxis_title='Tasa de Falsos Positivos',
                       yaxis_title='Tasa de Verdaderos Positivos')
 
 # --- Distribución de Probabilidades de Predicción ---
@@ -211,7 +221,7 @@ layout = html.Div([
                      className='chart-item'),
             html.Div([dcc.Graph(figure=fig_bar)],
                      className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_bar)],
+            html.Div([dcc.Graph(figure=fig_internet_donut)],
                      className='chart-item'),
         ], className='container-for-report'),
     ], className='container_report')
