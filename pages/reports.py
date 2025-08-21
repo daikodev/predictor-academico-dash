@@ -21,32 +21,25 @@ model.fit(X, y)
 total_estudiantes = len(student)
 tasa_aprobacion = (student['Exam_Result'].sum() / total_estudiantes) * 100
 
-
 # Obtener predicciones y contar estudiantes en riesgo
 predicciones = model.predict(X)
 estudiantes_en_riesgo = (predicciones == 0).sum()
-
 precision_modelo = accuracy_score(y, predicciones) * 100
 
 # Formatear los valores para la visualización
 tasa_aprobacion_str = f'{tasa_aprobacion:.1f}%'
 precision_modelo_str = f'{precision_modelo:.1f}%'
 
-# Calculamos importancia
-r = permutation_importance(model, X, y, n_repeats=30,
+# --- Importancia de las Variables ---
+r = permutation_importance(model, X, y, n_repeats=30,  # Calculamos la importancia de las variables
                            random_state=42, n_jobs=-1)
-
-# Convertimos a DataFrame
-importances_df = pd.DataFrame({
+importances_df = pd.DataFrame({  # Convertimos a DataFrame
     "feature": X.columns,
     "importance": r.importances_mean
 })
-
-# Ordenamos y tomamos las 5 más importantes
-top5 = importances_df.sort_values(by="importance", ascending=False).head(5)
-
+top5 = importances_df.sort_values(by="importance", ascending=False).head(
+    5)  # Ordenamos y tomamos las 5 más importantes
 top5 = top5.sort_values(by="importance", ascending=True)
-
 
 fig_importance = px.bar(
     top5,
@@ -57,16 +50,19 @@ fig_importance = px.bar(
     labels={"importance": "Importancia", "feature": "Variables"},
     text="importance"
 )
-fig_importance.update_traces(texttemplate="%{text:.4f}", textposition="outside")
+fig_importance.update_traces(
+    texttemplate="%{text:.4f}", textposition="outside")
 
+# --- ... ---
 fig = px.pie(
     student,
-    names="Exam_Result", 
-    title="Distribución de Resultados (Aprobado vs Desaprobado)",
-    color="Exam_Result",
-    color_discrete_map={1: "green", 0: "red"}  
+    names="Extracurricular_Activities",
+    title="Actividades Extracurriculares (0: No, 1: Sí)",
+    color="Extracurricular_Activities",
+    color_discrete_map={1: "green", 0: "red"}
 )
 
+# --- Horas de Estudio por Resultado de Examen ---
 fig_box = px.box(
     student,
     x="Exam_Result",
@@ -76,7 +72,7 @@ fig_box = px.box(
     labels={"Exam_Result": "Resultado", "Hours_Studied": "Horas de Estudio"},
     color_discrete_map={1: "green", 0: "red"}
 )
-
+# --- Tasa de Aprobación por Nivel de Motivación ---
 fig_bar = px.histogram(
     student,
     x="Motivation_Level",
@@ -89,12 +85,13 @@ fig_bar = px.histogram(
         "Exam_Result": "Resultado del Examen",
         "count": "Porcentaje de Estudiantes"
     },
-    color_discrete_map={1: "blue", 0: "gray"}, 
+    color_discrete_map={1: "blue", 0: "gray"},
     category_orders={
-        "Exam_Result": [1, 0] 
+        "Exam_Result": [1, 0]
     }
 )
 
+# --- Matriz de Confusión ---
 cm = confusion_matrix(y, predicciones)
 x_labels = ['Desaprobado', 'Aprobado']
 y_labels = ['Desaprobado', 'Aprobado']
@@ -102,39 +99,37 @@ fig_confusion = ff.create_annotated_heatmap(
     cm, x=x_labels, y=y_labels, colorscale='Blues',
     showscale=True, annotation_text=[[str(cell) for cell in row] for row in cm]
 )
-fig_confusion.update_layout(title="Matriz de Confusión", xaxis_title="Predicción", yaxis_title="Real")
+fig_confusion.update_layout(
+    title="Matriz de Confusión", xaxis_title="Predicción", yaxis_title="Real")
 
-# Curva ROC
-y_score = model.predict_proba(X)[:,1]
+# --- Curva ROC ---
+y_score = model.predict_proba(X)[:, 1]
 fpr, tpr, _ = roc_curve(y, y_score)
 roc_auc = auc(fpr, tpr)
 fig_roc = go.Figure()
-fig_roc.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines', name=f'ROC curve (AUC = {roc_auc:.2f})'))
-fig_roc.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode='lines', name='Aleatorio', line=dict(dash='dash')))
-fig_roc.update_layout(title='Curva ROC', xaxis_title='Tasa de Falsos Positivos', yaxis_title='Tasa de Verdaderos Positivos')
+fig_roc.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines',
+                  name=f'ROC curve (AUC = {roc_auc:.2f})'))
+fig_roc.add_trace(go.Scatter(
+    x=[0, 1], y=[0, 1], mode='lines', name='Aleatorio', line=dict(dash='dash')))
+fig_roc.update_layout(title='Curva ROC', xaxis_title='Tasa de Falsos Positivos',
+                      yaxis_title='Tasa de Verdaderos Positivos')
 
-# Mapa de Correlación
-fig_corr = px.imshow(
-    student.corr(),
-    text_auto=True,
-    title="Mapa de Correlación entre Variables"
-)
-
-# (Opcional) Distribución de Probabilidades de Predicción
-probs = model.predict_proba(X)[:,1]
+# --- Distribución de Probabilidades de Predicción ---
+probs = model.predict_proba(X)[:, 1]
 fig_probs = px.histogram(
     probs, nbins=20,
     title="Distribución de Probabilidades de Predicción",
-    labels={'value':'Probabilidad de Aprobar', 'count':'Cantidad'}
+    labels={'value': 'Probabilidad de Aprobar', 'count': 'Cantidad'}
 )
 fig_probs.update_layout(showlegend=False)
-
 # Ajusta el eje y para que vaya de 0 a 100
 fig_bar.update_yaxes(title="Tasa de Aprobación (%)", range=[0, 100])
-
 # Eliminar las etiquetas de porcentaje sobre las barras si no las quieres
 fig_bar.update_traces(texttemplate=None)
 
+
+# --- Layout Principal ---
+# --- Layout para ScoreCards ---
 kpi_cards = html.Div(
     className='kpi-container',
     children=[
@@ -151,7 +146,8 @@ kpi_cards = html.Div(
             children=[
                 html.P('Tasa de Aprobación', className='kpi-title'),
                 html.P(tasa_aprobacion_str, className='kpi-value-green'),
-                html.P('Porcentaje de aprobados', className='kpi-subtitle-info')
+                html.P('Porcentaje de aprobados',
+                       className='kpi-subtitle-info')
             ]
         ),
         html.Div(
@@ -177,37 +173,38 @@ layout = html.Div([
     html.Div([
         html.Div([
             html.H1("Reportes y Análisis"),
-
             html.P("Visualización de datos y tendencias del rendimiento académico",
-                  className='subtitle'),
+                   className='subtitle'),
         ], className='container-1'),
         kpi_cards,
-        html.Div([
-            html.Div([dcc.Graph(figure=fig)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_box)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_bar)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_importance)], className='chart-item'),
-        ], className='container-for-report'),
-    ], className='container_report')
-])
 
-layout = html.Div([
-    html.Div([
+        html.H2("Reportes del Modelo Predictivo"),
         html.Div([
-            html.H1("Reportes y Análisis"),
-            html.P("Visualización de datos y tendencias del rendimiento académico", className='subtitle'),
-        ], className='container-1'),
-        kpi_cards,
-        html.Div([
-            html.Div([dcc.Graph(figure=fig)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_box)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_bar)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_importance)], className='chart-item'),
-            # --- Agrega aquí los nuevos gráficos ---
-            html.Div([dcc.Graph(figure=fig_confusion)], className='chart-item'),
+            # --- Gráficos para evaluación del modelo ---
+            html.Div([
+                html.Div([dcc.Graph(figure=fig_importance)],
+                         className='chart-item-expand'),
+            ], style={'width': '100%'}),
+
+            html.Div([dcc.Graph(figure=fig_confusion)],
+                     className='chart-item'),
+
             html.Div([dcc.Graph(figure=fig_roc)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_corr)], className='chart-item'),
-            html.Div([dcc.Graph(figure=fig_probs)], className='chart-item'),
+
+            html.Div([dcc.Graph(figure=fig_probs)],
+                     className='chart-item-expand'),
+        ], className='container-for-report'),
+
+        html.H2("Reportes Estadísticos"),
+        html.Div([
+            # --- Gráficos estadísticos ---
+            html.Div([dcc.Graph(figure=fig)], className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_box)],
+                     className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_bar)],
+                     className='chart-item'),
+            html.Div([dcc.Graph(figure=fig_bar)],
+                     className='chart-item'),
         ], className='container-for-report'),
     ], className='container_report')
 ])

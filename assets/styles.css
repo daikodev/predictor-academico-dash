@@ -28,6 +28,15 @@ h1 {
   margin: 0px 0px 8px 0px;
 }
 
+h2 {
+  font-size: 1.25rem;
+  line-height: 24px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #0f172b;
+  margin-top: 0px;
+}
+
 nav {
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0;
@@ -262,92 +271,109 @@ input {
 /* Report */
 
 .kpi-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 32px;
 }
 
 .kpi-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 20px;
-    margin: 10px;
-    width: 220px;
-    text-align: center;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    transition: transform 0.2s;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  width: 220px;
+  text-align: center;
+  font-family: "Segoe UI", Arial, sans-serif;
+  transition: transform 0.2s;
 }
 
 .kpi-card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-5px);
 }
 
 .kpi-title {
-    font-size: 16px;
-    color: #6c757d;
-    margin-bottom: 5px;
+  font-size: 16px;
+  color: #6c757d;
+  margin-bottom: 5px;
 }
 
 .kpi-value {
-    font-size: 32px;
-    font-weight: 600;
-    color: #212529;
-    margin: 10px 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #212529;
+  margin: 10px 0;
 }
 
 .kpi-value-green {
-    font-size: 32px;
-    font-weight: 600;
-    color: #28a745;
-    margin: 10px 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #28a745;
+  margin: 10px 0;
 }
 
 .kpi-value-red {
-    font-size: 32px;
-    font-weight: 600;
-    color: #dc3545;
-    margin: 10px 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #dc3545;
+  margin: 10px 0;
 }
 
 .kpi-subtitle-info {
-    font-size: 14px;
-    color: #6c757d;
+  font-size: 14px;
+  color: #6c757d;
 }
 /* Contenedor de los gráficos */
 .container-for-report {
-    display: flex;
-    flex-wrap: wrap; 
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 1400px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin-bottom: 32px;
 }
 
 /* Estilo para cada gráfico */
+
+.chart-item,
+.chart-item-expand {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
 .chart-item {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 10px;
-    margin: 10px;
-    flex: 1 1 calc(50% - 40px); /* Regla clave para la grilla */
-    min-width: 500px; /* Evita que los gráficos se "aplasten" demasiado */
-    box-sizing: border-box;
+  padding: 10px;
+  margin: 10px;
+  flex: 1 1 calc(50% - 40px); /* Regla clave para la grilla */
+  /*min-width: 500px; /* Evita que los gráficos se "aplasten" demasiado */
+  box-sizing: border-box;
+}
+
+.chart-item-expand {
+  padding: 10px;
+  width: 100%;
+  /*min-width: 500px; /* Evita que los gráficos se "aplasten" demasiado */
+  box-sizing: border-box;
 }
 
 /* Media Query para pantallas pequeñas */
 @media (max-width: 768px) {
-    .chart-item {
-        flex-basis: 100%; /* Cada gráfico ocupa el 100% del ancho */
-    }
-}
-/* Iconos */
+  .chart-item {
+    flex-basis: 100%; /* Cada gráfico ocupa el 100% del ancho */
+  }
 
+  .kpi-container {
+    justify-content: space-around;
+    gap: 20px;
+  }
+}
+
+/* Iconos */
 .lets-icons--form-fill {
   display: inline-block;
   width: 20px;
@@ -455,6 +481,11 @@ input {
   .flex-column {
     width: 100%;
   }
+
+  .kpi-container {
+    justify-content: space-around;
+    gap: 20px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -497,6 +528,12 @@ input {
   transition: all 0.3s;
 }
 
+@media (max-width: 1000px) {
+  .kpi-container {
+    justify-content: space-around;
+    gap: 20px;
+  }
+}
 @media (max-width: 900px) {
   .hamburger {
     display: flex;
@@ -510,7 +547,7 @@ input {
     top: 64px;
     right: 0;
     width: 200px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     z-index: 100;
   }
   .nav-links.nav-links-open {
@@ -536,57 +573,55 @@ input {
 }
 
 .container-for-report {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    padding: 10px;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 1400px;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1400px;
+  gap: 20px;
 }
 
 .chart-item {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 10px;
-    margin: 0;
-    flex: 1 1 45%;
-    min-width: 320px;
-    max-width: 600px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  margin: 0;
+  flex: 1 1 45%;
+  min-width: 320px;
+  max-width: 600px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Responsive para pantallas medianas */
 @media (max-width: 900px) {
-    .container-for-report {
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-    }
-    .chart-item {
-        min-width: 0;
-        width: 100%;
-        max-width: 100%;
-    }
+  .container-for-report {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .chart-item {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* Responsive para pantallas pequeñas */
 @media (max-width: 600px) {
-    .container-for-report {
-        padding: 0;
-        margin: 0;
-        width: 100%;
-    }
-    .chart-item {
-        padding: 4px;
-        min-width: 0;
-        width: 100%;
-        max-width: 100%;
-    }
+  .container-for-report {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  .chart-item {
+    padding: 4px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
 }
