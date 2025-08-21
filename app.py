@@ -7,6 +7,7 @@ import plotly.express as px
 from sklearn.neural_network import MLPClassifier
 import pandas as pd
 import numpy as np
+import os
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
@@ -219,5 +220,6 @@ def predict_student(n_clicks, Hours_Studied, Attendance, Parental_Involvement,
         ], {'display': 'block'}, 'card card-danger'
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8050))
+    app.run(host="0.0.0.0", port=port, debug=False)
