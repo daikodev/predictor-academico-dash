@@ -221,5 +221,5 @@ def predict_student(n_clicks, Hours_Studied, Attendance, Parental_Involvement,
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    port = int(os.environ.get("PORT", 8050))
+    app.run_server(debug=False, host="0.0.0.0", port=port)
