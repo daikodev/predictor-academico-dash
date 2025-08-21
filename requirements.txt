@@ -2,5 +2,5 @@ dash==3.1.1
 pandas
 numpy
 plotly
-gunicorn
 scikit-learn
+gunicorn
