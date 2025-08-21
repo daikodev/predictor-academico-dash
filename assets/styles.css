@@ -338,6 +338,13 @@ input {
 
 /* Estilo para cada gráfico */
 
+.dash-graph {
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 .chart-item,
 .chart-item-expand {
   background-color: #ffffff;

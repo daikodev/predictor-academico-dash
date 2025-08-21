@@ -9,6 +9,11 @@ import plotly.figure_factory as ff
 import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
+import plotly.io as pio
+
+# Establecer Inter como fuente global en todos los gráficos
+pio.templates.default = "plotly_white"
+pio.templates["plotly_white"].layout.font.family = "Inter, sans-serif"
 
 X = student.drop("Exam_Result", axis=1)
 y = student["Exam_Result"]
@@ -51,7 +56,8 @@ fig_importance = px.bar(
     text="importance"
 )
 fig_importance.update_traces(
-    texttemplate="%{text:.4f}", textposition="outside")
+    texttemplate="%{text:.4f}", textposition="outside", marker_color="#3B82F6"
+)
 
 # --- ... ---
 fig = px.pie(
@@ -59,7 +65,7 @@ fig = px.pie(
     names="Extracurricular_Activities",
     title="Actividades Extracurriculares (0: No, 1: Sí)",
     color="Extracurricular_Activities",
-    color_discrete_map={1: "green", 0: "red"}
+    color_discrete_map={1: "#3B82F6", 0: "#64748B"}
 )
 
 # --- Horas de Estudio por Resultado de Examen ---
@@ -70,7 +76,7 @@ fig_box = px.box(
     color="Exam_Result",
     title="Horas de Estudio según el Resultado",
     labels={"Exam_Result": "Resultado", "Hours_Studied": "Horas de Estudio"},
-    color_discrete_map={1: "green", 0: "red"}
+    color_discrete_map={1: "#3B82F6", 0: "#64748B"}
 )
 # --- Tasa de Aprobación por Nivel de Motivación ---
 fig_bar = px.histogram(
@@ -85,7 +91,7 @@ fig_bar = px.histogram(
         "Exam_Result": "Resultado del Examen",
         "count": "Porcentaje de Estudiantes"
     },
-    color_discrete_map={1: "blue", 0: "gray"},
+    color_discrete_map={1: "#3B82F6", 0: "#64748B"},
     category_orders={
         "Exam_Result": [1, 0]
     }
@@ -96,7 +102,7 @@ cm = confusion_matrix(y, predicciones)
 x_labels = ['Desaprobado', 'Aprobado']
 y_labels = ['Desaprobado', 'Aprobado']
 fig_confusion = ff.create_annotated_heatmap(
-    cm, x=x_labels, y=y_labels, colorscale='Blues',
+    cm, x=x_labels, y=y_labels, colorscale=[[0, "#DBEAFE"], [1, "#3B82F6"]],
     showscale=True, annotation_text=[[str(cell) for cell in row] for row in cm]
 )
 fig_confusion.update_layout(
@@ -106,9 +112,11 @@ fig_confusion.update_layout(
 y_score = model.predict_proba(X)[:, 1]
 fpr, tpr, _ = roc_curve(y, y_score)
 roc_auc = auc(fpr, tpr)
+
 fig_roc = go.Figure()
+
 fig_roc.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines',
-                  name=f'ROC curve (AUC = {roc_auc:.2f})'))
+                  name=f'ROC curve (AUC = {roc_auc:.2f})', line=dict(color="#3B82F6", width=2)))
 fig_roc.add_trace(go.Scatter(
     x=[0, 1], y=[0, 1], mode='lines', name='Aleatorio', line=dict(dash='dash')))
 fig_roc.update_layout(title='Curva ROC', xaxis_title='Tasa de Falsos Positivos',
@@ -123,9 +131,9 @@ fig_probs = px.histogram(
 )
 fig_probs.update_layout(showlegend=False)
 # Ajusta el eje y para que vaya de 0 a 100
-fig_bar.update_yaxes(title="Tasa de Aprobación (%)", range=[0, 100])
+fig_probs.update_yaxes(title="Tasa de Aprobación (%)", range=[0, 100])
 # Eliminar las etiquetas de porcentaje sobre las barras si no las quieres
-fig_bar.update_traces(texttemplate=None)
+fig_probs.update_traces(marker_color="#3B82F6")
 
 
 # --- Layout Principal ---
